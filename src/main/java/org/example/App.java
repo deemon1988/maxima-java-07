@@ -13,7 +13,9 @@ public class App {
     public static final String DB_URL = "jdbc:h2:mem:test";   // тестовый сервер
     public static final String DB_DRIVER = "org.h2.Driver";
 
-    public static void main(String[] args) throws IOException {
+
+    public static void main(String[] args) throws Exception {
+
 
         try {
             Class.forName(DB_DRIVER);
@@ -21,8 +23,6 @@ public class App {
             System.out.println("Соединение с БД выполнено");
 
             Statement statement = connection.createStatement();
-
-
 
             statement.executeUpdate("CREATE TABLE cats (NAME VARCHAR(45), Weight INT)");
             statement.executeUpdate("INSERT INTO cats(name, weight) VALUES ('Мурзик', 10)");
