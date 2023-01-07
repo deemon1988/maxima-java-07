@@ -13,6 +13,11 @@ public class Cat {
         this.isAngry = isAngry;
     }
 
+
+    protected Cat() {
+
+    }
+
     public Long getId() {
         return id;
     }
