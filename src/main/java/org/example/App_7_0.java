@@ -8,30 +8,25 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.example.model.Cat;
 
 import javax.sql.DataSource;
-import java.io.FileInputStream;
 import java.sql.*;
 
-import java.util.Properties;
 import java.util.function.Function;
 
 
-public class AppLesson_7_4 {
+public class App_7_0 {
 
-  /*  public static final String DB_URL = "jdbc:h2:mem:test";   // тестовый сервер
-    public static final String DB_DRIVER = "org.h2.Driver";*/
+    public static final String DB_URL = "jdbc:h2:mem:test";   // тестовый сервер
+    public static final String DB_DRIVER = "org.h2.Driver";
 
 
     public static void main(String[] args) throws Exception {
 
-        String propertiesPath = "database.properties";
-         Properties dbProps = new Properties();
-        dbProps.load(new FileInputStream(propertiesPath));
 
         try {
 
             HikariConfig config = new HikariConfig();
-            config.setJdbcUrl((dbProps.getProperty("db.url")));
-            config.setDriverClassName((dbProps.getProperty("db.driver")));
+            config.setJdbcUrl(DB_URL);
+            config.setDriverClassName(DB_DRIVER);
             DataSource dataSource = new HikariDataSource(config);
             Connection connection = dataSource.getConnection();
 
@@ -54,39 +49,32 @@ public class AppLesson_7_4 {
 
             Statement statement = connection.createStatement();
 
-            statement.executeUpdate("CREATE TABLE cats (id INT, NAME VARCHAR(45), Weight INT, isAngry BIT)");
+            statement.executeUpdate("CREATE TABLE cats (id INT, Name VARCHAR(45), Weight INT, isAngry BIT)");
             statement.executeUpdate("INSERT INTO cats(id, name, weight, isAngry) VALUES (1L, 'Мурзик', 10, true)");
             statement.executeUpdate("INSERT INTO cats(id, name, weight, isAngry) VALUES (2L, 'Рамзес', 2, false)");
             statement.executeUpdate("INSERT INTO cats(id, name, weight, isAngry) VALUES (3L, 'Эдуард', 5, true)");
             statement.executeUpdate("INSERT INTO cats(id, name, weight, isAngry) VALUES (4L, 'Эдуард', 7, false)");
 
-            // statement.executeUpdate("ALTER TABLE cats ADD isAngry BIT"); // из занятия 7.2
+           // statement.executeUpdate("ALTER TABLE cats ADD isAngry BIT"); // из занятия 7.2
 
-            // String name = "'Эдуард' OR '01'='01"; // взлом кода на переименование всех котов
-            /*String request = String.format("UPDATE cats SET name='Карл' WHERE name = '%s'", name);  // из 7.3 (sql инъекции)
+          /*  String name = "'Эдуард' OR '01'='01";
+            String request = String.format("UPDATE cats SET name='Карл' WHERE name = '%s'", name);  // из 7.3 (sql инъекции)
             int rows = statement.executeUpdate(request);
             System.out.println("Обновлено записей:"+rows);*/
 
-            String name = "Эдуард";
-            String query ="UPDATE cats SET name='Карл' WHERE name=?";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, name);
-            int rows = preparedStatement.executeUpdate();
-
-
-           // int rows = statement.executeUpdate("UPDATE cats SET name='Карл' WHERE name = 'Эдуард'");
+            int rows = statement.executeUpdate("UPDATE cats SET name='Карл' WHERE name = 'Эдуард'");
             System.out.println("Обновлено записей:"+rows);
 
-           /* rows = statement.executeUpdate("DELETE FROM cats WHERE weight=5");
-            System.out.println("Удалено записей:"+rows);*/
+            rows = statement.executeUpdate("DELETE FROM cats WHERE weight=5");
+            System.out.println("Удалено записей:"+rows);
 
             ResultSet result = statement.executeQuery("SELECT * FROM cats");
             while (result.next()){
                 Cat cat = catRowMapper.apply(result);
-               /* String name = result.getString("name");
-                int weight = result.getInt("weight");
-                boolean isAngry = result.getBoolean("isAngry");*/
-                String template = (cat.isAngry() ? "Сердитый":"Добродушный ")+"кот %s весом %d кг.";
+                String name = result.getString("name");
+               int weight = result.getInt("weight");
+               boolean isAngry = result.getBoolean("isAngry");
+               String template = (cat.isAngry() ? "Сердитый":"Добродушный ")+"кот %s весом %d кг.";
                 System.out.println(String.format(template, cat.getName(), cat.getWeight(), cat.isAngry()));
             }
 

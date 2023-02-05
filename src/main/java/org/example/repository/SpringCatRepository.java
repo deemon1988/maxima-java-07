@@ -24,10 +24,10 @@ public class SpringCatRepository implements CatRepository{
    public void init(){
        jdbcTemplate = new JdbcTemplate(dataSource);
        jdbcTemplate.execute("CREATE TABLE cats (id INT, Name VARCHAR(45), Weight INT, isAngry BIT)"); // создание таблицы
-        create(new Cat(1L, "Мурзик", 10, true));
-       create(new Cat(2L, "Рамзес", 2, false));
-       create(new Cat(3L, "Эдуард", 5, true));
-       create(new Cat(4L, "Эдуард", 7, false));
+        create(new Cat( "Мурзик", 10, true,1L));
+       create(new Cat( "Рамзес", 2, false,2L));
+       create(new Cat( "Эдуард", 5, true,3L));
+       create(new Cat( "Эдуард", 7, false,4L));
 
        //query
        //update

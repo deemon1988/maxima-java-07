@@ -1,16 +1,16 @@
 package org.example.model;
 
 public class Cat {
-    private Long id;
+
     private String name;
     private int weight;
     private boolean isAngry;
-
-    public Cat(Long id, String name, int weight, boolean isAngry) {
-        this.id = id;
+    private Long id;
+    public Cat(String name, int weight, boolean isAngry, Long id ) {
         this.name = name;
         this.weight = weight;
         this.isAngry = isAngry;
+        this.id = id;
     }
 
 

@@ -32,10 +32,10 @@ public class SpringConfig {
     @Bean("rowmapper")
     public RowMapper<Cat> catRowMapper (){
         return (rs, rowNum) ->  new Cat(
-                rs.getLong("id"),
                 rs.getString("name"),
                 rs.getInt("weight"),
-                rs.getBoolean("isAngry")
-        );
+                rs.getBoolean("isAngry"),
+                rs.getLong("id")
+                );
     }
 }
