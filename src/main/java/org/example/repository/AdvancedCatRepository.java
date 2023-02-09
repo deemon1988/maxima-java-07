@@ -3,12 +3,8 @@ package org.example.repository;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.example.model.Cat;
-import org.springframework.core.env.Environment;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.sql.DataSource;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
@@ -18,23 +14,6 @@ import java.util.function.Function;
 
 
 public class AdvancedCatRepository implements CatRepository {
-    // static String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
-    //  static String catalogConfigPath = rootPath + "application.properties";
-
-    // static String propertiesPath = Thread.currentThread().getContextClassLoader().getResource("application.properties").getPath();
-    Function<ResultSet, Cat> catRowMapper = rs -> {
-        try {
-            return new Cat(
-                    rs.getString("name"),
-                    rs.getInt("weight"),
-                    rs.getBoolean("isAngry"),
-                    rs.getLong("id")
-            );
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    };
-
     private static HikariConfig config = new HikariConfig();
     private static HikariDataSource ds;
 
@@ -55,7 +34,20 @@ public class AdvancedCatRepository implements CatRepository {
         ds = new HikariDataSource(config);
     }
 
+    Function<ResultSet, Cat> catRowMapper = rs -> {
+        try {
+            return new Cat(
+                    rs.getString("name"),
+                    rs.getInt("weight"),
+                    rs.getBoolean("isAngry"),
+                    rs.getLong("id")
+            );
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    };
 
+    private static final String SQL_CREATE = "CREATE TABLE IF NOT EXISTS cats (id INT, NAME VARCHAR(45), Weight INT, isAngry BIT)";
 
     @Override
     public boolean create(Cat element) {
@@ -64,17 +56,15 @@ public class AdvancedCatRepository implements CatRepository {
             System.out.println("Соединение с БД выполнено");
 
             Statement statement = connection.createStatement();
+            statement.executeUpdate(SQL_CREATE);
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS cats (id INT, NAME VARCHAR(45), Weight INT, isAngry BIT)");
             statement.executeUpdate((String.format("INSERT INTO cats(name, weight, isAngry, id) VALUES ('%s', %d,'%s', %d)"
                     , element.getName(), element.getWeight(), element.isAngry(), element.getId())));
-
             ResultSet result = statement.executeQuery("SELECT * FROM cats");
             while (result.next()) {
-                String name = result.getString("name");
-                int weight = result.getInt("weight");
-                boolean isAngry = result.getBoolean("isAngry");
-                long id = result.getLong("id");
-                System.out.println(name + " " + weight + " " + isAngry + " " + id);
+                Cat cat = catRowMapper.apply(result);
+                String template = (cat.isAngry() ? "Сердитый " : "Добродушный ") + "кот %s весом %d кг.";
+                System.out.println(String.format(template, cat.getName(), cat.getWeight(), cat.isAngry()));
             }
 
             connection.close();
@@ -101,6 +91,7 @@ public class AdvancedCatRepository implements CatRepository {
                 String template = (cat.isAngry() ? "Сердитый " : "Добродушный ") + "кот %s весом %d кг.";
                 System.out.println(String.format(template, cat.getName(), cat.getWeight(), cat.isAngry()));
             }
+
             connection.close();
             System.out.println("Отключение от БД выполнено");
         } catch (SQLException e) {

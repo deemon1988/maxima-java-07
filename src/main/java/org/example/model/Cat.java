@@ -5,6 +5,7 @@ public class Cat {
     private String name;
     private int weight;
     private boolean isAngry;
+
     private Long id;
     public Cat(String name, int weight, boolean isAngry, Long id ) {
         this.name = name;

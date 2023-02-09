@@ -18,7 +18,7 @@ import java.util.Properties;
 
 public class App_7_3 {
 
-   // private static BaseRepository<Cat, Long> baseRepository;
+    // private static BaseRepository<Cat, Long> baseRepository;
     private static AdvancedCatRepository advancedCatRepository;
 
     public static void main(String[] args) throws IOException {
@@ -32,8 +32,8 @@ public class App_7_3 {
         advancedCatRepository = new AdvancedCatRepository();
         advancedCatRepository.create(murzik);
         advancedCatRepository.create(barsik);
-      advancedCatRepository.read(1L);
-       advancedCatRepository.update(1L, murka);
+        advancedCatRepository.read(1L);
+        advancedCatRepository.update(1L, murka);
         advancedCatRepository.delete(1L);
         advancedCatRepository.findAll();
 
